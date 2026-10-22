@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Las Fases de la Luna - CEIP Penyagolosa</title>
+    <!-- Fuentes Escolares y Fredoka -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600&family=Playwrite+ES:wght@300;400&family=Fredoka:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4a6fa5;
+            --secondary: #ffb703;
+            --accent: #fb8500;
+            --bg-color: #f0f7ff;
+            --card-bg: #ffffff;
+            --text-color: #2b2d42;
+            --success: #38b000;
+            --pauta-bg: #eef4ff;
+            --pauta-line: #a0c4ff;
+            --pauta-red: #ffadad;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 650px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border: 4px solid #cce3de;
+            margin-bottom: 30px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1d3557, #457b9d);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .lang-select {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .screen {
+            padding: 20px;
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Pauta de Doble Línea Escolar */
+        .pauta-doble {
+            background-color: var(--pauta-bg);
+            background-image: 
+                linear-gradient(to bottom, var(--pauta-red) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--pauta-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--pauta-line) 1px, transparent 1px),
+                linear-gradient(to bottom, var(--pauta-red) 1px, transparent 1px);
+            background-size: 100% 32px;
+            background-position: 0 0, 0 8px, 0 16px, 0 24px;
+            font-family: 'Playwrite ES', cursive;
+            font-size: 1.4rem;
+            line-height: 32px;
+            color: #1d3557;
+            padding: 10px 15px;
+            border-radius: 12px;
+            border: 2px solid #bde0fe;
+            width: 100%;
+            resize: none;
+            outline: none;
+        }
+
+        /* Botones e Interfaz */
+        .btn {
+            background: var(--secondary);
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transition: transform 0.2s, background 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin: 10px 5px;
+        }
+
+        .btn:hover {
+            transform: scale(1.05);
+            background: var(--accent);
+        }
+
+        .btn-audio {
+            background: #4cc9f0;
+            padding: 8px 14px;
+            font-size: 0.9rem;
+        }
+
+        /* Tarjetas de Fases */
+        .phases-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .phase-card {
+            background: #f8f9fa;
+            border: 3px solid #e9ecef;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .phase-card:hover, .phase-card.selected {
+            border-color: var(--primary);
+            background: #eef4ff;
+            transform: translateY(-3px);
+        }
+
+        .moon-svg {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 10px;
+        }
+
+        /* Retos y Actividades */
+        .challenge-box {
+            background: #fff3b0;
+            border-left: 6px solid var(--accent);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+        }
+
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .option-btn {
+            background: #ffffff;
+            border: 2px solid #dee2e6;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-btn:hover {
+            background: #e9ecef;
+            border-color: var(--primary);
+        }
+
+        .option-btn.correct {
+            background: #d8f3dc;
+            border-color: var(--success);
+            color: #1b4332;
+        }
+
+        .option-btn.incorrect {
+            background: #ffccd5;
+            border-color: #e63946;
+            color: #9b2226;
+        }
+
+        /* Navegación inferior */
+        .nav-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 25px;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        /* Panel Docente Oculto */
+        #teacher-panel {
+            display: none;
+            background: #1d3557;
+            color: white;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 20px;
+            width: 100%;
+            max-width: 650px;
+        }
+
+        .teacher-trigger {
+            background: none;
+            border: none;
+            color: #adb5bd;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 20px;
+            text-decoration: underline;
+        }
+
+        /* Mensaje de éxito / Confeti visual */
+        .feedback-msg {
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 15px 0;
+            min-height: 30px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <button class="lang-select" onclick="toggleLanguage()">🌐 <span id="lang-label">Valencià</span></button>
+            <h1 id="main-title">🌙 Les Fases de la Lluna</h1>
+            <p id="main-subtitle">CEIP Penyagolosa · 2n de Primària</p>
+        </header>
+
+        <!-- Pantalla 1: Bienvenida -->
+        <div id="screen-welcome" class="screen active">
+            <div style="text-align: center; padding: 20px 0;">
+                <svg width="120" height="120" viewBox="0 0 100 100">
+                    <circle cx="50" cy="50" r="40" fill="#ffb703" />
+                    <path d="M50 10 A40 40 0 0 1 50 90 Z" fill="#1d3557" />
+                </svg>
+                <h2 id="welcome-h2" style="margin: 15px 0; color: var(--primary);">¡Hola, explorador/a del espacio!</h2>
+                <p id="welcome-p" style="margin-bottom: 20px; font-size: 1.1rem;">Aprende y diviértete descubriendo cómo cambia nuestra luna.</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <label id="name-label" style="display: block; margin-bottom: 8px; font-weight: 600;">Escribe tu nombre:</label>
+                    <input type="text" id="student-name" class="pauta-doble" placeholder="Tu nombre aquí..." style="text-align: center;">
+                </div>
+
+                <button class="btn" onclick="startApp()">🚀 <span id="btn-start">Començar l'Aventura</span></button>
+            </div>
+        </div>
+
+        <!-- Pantalla 2: Exploración Visual y Auditiva -->
+        <div id="screen-explore" class="screen">
+            <div class="challenge-box">
+                <span id="explore-desc">Pulsas sobre cada fase para escuchar su explicación y ver cómo es.</span>
+                <button class="btn btn-audio" onclick="speakText(currentExploreText)">🔊 <span id="audio-btn-txt">Escuchar</span></button>
+            </div>
+
+            <div class="phases-grid">
+                <div class="phase-card" onclick="selectPhase('nova')">
+                    <!-- Luna Nueva SVG -->
+                    <svg class="moon-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#1d3557"/><circle cx="50" cy="50" r="40" fill="none" stroke="#4a6fa5" stroke-width="4"/></svg>
+                    <h3 id="phase-1-title">Lluna Nova</h3>
+                    <p style="font-size: 0.9rem; color: #666;" id="phase-1-sub">No la vemos desde la Tierra.</p>
+                </div>
+                <div class="phase-card" onclick="selectPhase('creixent')">
+                    <!-- Cuarto Creciente SVG -->
+                    <svg class="moon-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#1d3557"/><path d="M50 10 A40 40 0 0 1 50 90 Z" fill="#ffb703"/></svg>
+                    <h3 id="phase-2-title"> Quart Creixent</h3>
+                    <p style="font-size: 0.9rem; color: #666;" id="phase-2-sub">Forma una letra D en el cielo.</p>
+                </div>
+                <div class="phase-card" onclick="selectPhase('plena')">
+                    <!-- Luna Llena SVG -->
+                    <svg class="moon-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ffb703"/><circle cx="35" cy="40" r="6" fill="#e9c46a"/><circle cx="65" cy="65" r="8" fill="#e9c46a"/></svg>
+                    <h3 id="phase-3-title">Lluna Plena</h3>
+                    <p style="font-size: 0.9rem; color: #666;" id="phase-3-sub">Brilla redonda y gigante.</p>
+                </div>
+                <div class="phase-card" onclick="selectPhase('minvant')">
+                    <!-- Cuarto Menguante SVG -->
+                    <svg class="moon-svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="#ffb703"/><path d="M50 10 A40 40 0 0 0 50 90 Z" fill="#1d3557"/></svg>
+                    <h3 id="phase-4-title"> Quart Minvant</h3>
+                    <p style="font-size: 0.9rem; color: #666;" id="phase-4-sub">Va disminuyendo poco a poco.</p>
+                </div>
+            </div>
+
+            <div class="nav-footer">
+                <button class="btn" onclick="goToScreen('welcome')">⬅️ Enrere</button>
+                <button class="btn" onclick="goToScreen('challenge1')">Següent Reto ➡️</button>
+            </div>
+        </div>
+
+        <!-- Pantalla 3: Reto 1 - Ordenar Fases -->
+        <div id="screen-challenge1" class="screen">
+            <div class="challenge-box">
+                <h3 id="c1-title">🎯 Reto 1: ¿Cuál es la primera fase del ciclo lunar?</h3>
+            </div>
+            <p id="c1-instruction" style="margin-bottom: 10px; font-weight: 600;">Selecciona la respuesta correcta:</p>
+            
+            <div class="options-container">
+                <button class="option-btn" onclick="checkAnswer(this, false, 1)">A) La Luna Llena, porque brilla mucho.</button>
+                <button class="option-btn" onclick="checkAnswer(this, true, 1)">B) La Luna Nueva, cuando no se ve iluminada desde la Tierra.</button>
+                <button class="option-btn" onclick="checkAnswer(this, false, 1)">C) El Cuarto Creciente.</button>
+            </div>
+            
+            <div class="feedback-msg" id="feedback-1"></div>
+
+            <div class="nav-footer">
+                <button class="btn" onclick="goToScreen('explore')">⬅️ Enrere</button>
+                <button class="btn" onclick="goToScreen('challenge2')">Següent Reto ➡️</button>
+            </div>
+        </div>
+
+        <!-- Pantalla 4: Reto 2 - Verdadero o Falso -->
+        <div id="screen-challenge2" class="screen">
+            <div class="challenge-box">
+                <h3 id="c2-title">⭐ Reto 2: Verdadero o Falso</h3>
+            </div>
+            <p id="c2-q" style="margin-bottom: 15px; font-weight: 600;">"La Luna tarda aproximadamente 28 días en completar todas sus fases."</p>
+            
+            <div class="options-container">
+                <button class="option-btn" onclick="checkAnswer(this, true, 2)">✅ <span id="true-txt">Verdadero</span></button>
+                <button class="option-btn" onclick="checkAnswer(this, false, 2)">❌ <span id="false-txt">Falso</span></button>
+            </div>
+
+            <div class="feedback-msg" id="feedback-2"></div>
+
+            <div class="nav-footer">
+                <button class="btn" onclick="goToScreen('challenge1')">⬅️ Enrere</button>
+                <button class="btn" onclick="goToScreen('challenge3')">Següent Reto ➡️</button>
+            </div>
+        </div>
+
+        <!-- Pantalla 5: Reto 3 - Diario Lunar (Pauta Doble) -->
+        <div id="screen-challenge3" class="screen">
+            <div class="challenge-box">
+                <h3 id="c3-title">✍️ Reto 3: Mi fase favorita</h3>
+            </div>
+            <p id="c3-q" style="margin-bottom: 10px; font-weight: 600;">Escribe en tu pauta de doble línea cuál es tu fase lunar preferida y por qué:</p>
+            
+            <textarea class="pauta-doble" rows="4" id="student-diary" placeholder="Ejemplo: Mi fase preferida es la lluna plena porque brilla mucho en la nit..."></textarea>
+
+            <div class="feedback-msg" id="feedback-3">¡Excelente trabajo de escritura! Guardado en tu cuaderno espacial. ⭐</div>
+
+            <div class="nav-footer">
+                <button class="btn" onclick="goToScreen('challenge2')">⬅️ Enrere</button>
+                <button class="btn" onclick="goToScreen('summary')">🏁 Finalitzar! 🌟</button>
+            </div>
+        </div>
+
+        <!-- Pantalla 6: Resumen y Premios -->
+        <div id="screen-summary" class="screen" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 10px;">🏆🎉</div>
+            <h2 id="sum-title" style="color: var(--primary); margin-bottom: 10px;">¡Misión Lunar Completada!</h2>
+            <p id="sum-subtitle" style="font-size: 1.1rem; margin-bottom: 20px;">Has demostrado ser un experto astrónomo del CEIP Penyagolosa.</p>
+            
+            <div style="background: #eef4ff; padding: 20px; border-radius: 16px; margin-bottom: 20px;">
+                <p id="congrats-name" style="font-family: 'Playwrite ES', cursive; font-size: 1.5rem; color: #1d3557;"></p>
+                <p style="margin-top: 10px;" id="badge-txt">🏅 Medalla de Oro Espacial conseguida</p>
+            </div>
+
+            <button class="btn" onclick="location.reload()">🔄 <span id="restart-txt">Tornar a jugar</span></button>
+        </div>
+    </div>
+
+    <!-- Botón discreto para Panel Docente -->
+    <button class="teacher-trigger" onclick="toggleTeacherPanel()">👩‍🏫 Panel Docente (Decret 96/2026)</button>
+
+    <div id="teacher-panel">
+        <h3>📋 Ficha de Observación Pedagógica</h3>
+        <p><strong>Área:</strong> Conocimiento del Medio Natural y Social.</p>
+        <p><strong>Criterio de Evaluación:</strong> Reconocimiento de los movimientos de los cuerpos celestes y fases lunares (DUA - Apoyo visual y auditivo inclusivo).</p>
+        <p><strong>Atención alumnado de refuerzo (Nizar, Aawhr, Sofia, Lusi, Jian, Yaad, Daoud):</strong> Usar lectura de voz asistida y refuerzo positivo inmediato en cada reto.</p>
+    </div>
+
+    <script>
+        let currentLang = 'val';
+        let currentExploreText = "La Lluna no té llum pròpia, sinó que reflecteix la llum del Sol.";
+
+        const translations = {
+            val: {
+                mainTitle: "🌙 Les Fases de la Lluna",
+                mainSubtitle: "CEIP Penyagolosa · 2n de Primària",
+                langLabel: "Castellano",
+                welcomeH2: "¡Hola, explorador/a!",
+                welcomeP: "Aprèn i diverteix-te descobrint com canvia la nostra lluna.",
+                nameLabel: "Escriu el teu nom:",
+                btnStart: "Començar l'Aventura",
+                exploreDesc: "Prem damunt de cada fase per escoltar la seua explicació i veure com és.",
+                audioBtnTxt: "Escoltar",
+                phase1Title: "Lluna Nova",
+                phase1Sub: "No la veiem des de la Terra.",
+                phase2Title: "Quart Creixent",
+                phase2Sub: "Forma una lletra D al cel.",
+                phase3Title: "Lluna Plena",
+                phase3Sub: "Brilla redona i gegant.",
+                phase4Title: "Quart Minvant",
+                phase4Sub: "Va disminuint poc a poc.",
+                c1Title: "🎯 Repte 1: Quina és la primera fase del cicle lunar?",
+                c1Instruction: "Selecciona la resposta correcta:",
+                c2Title: "⭐ Repte 2: Vertader o Fals",
+                trueTxt: "Vertader",
+                falseTxt: "Fals",
+                c3Title: "✍️ Repte 3: La meua fase favorita",
+                c3Q: "Escriu a la teua pauta de doble línia quina és la teua fase lunar preferida:",
+                sumTitle: "¡Missió Lunar Completada!",
+                sumSubtitle: "Has demostrat ser un astrònom expert del CEIP Penyagolosa.",
+                badgeTxt: "🏅 Medalla d'Or Espacial aconseguida",
+                restartTxt: "Tornar a jugar",
+                back: "⬅️ Enrere",
+                next: "Següent Repte ➡️"
+            },
+            cas: {
+                mainTitle: "🌙 Las Fases de la Luna",
+                mainSubtitle: "CEIP Penyagolosa · 2º de Primaria",
+                langLabel: "Valencià",
+                welcomeH2: "¡Hola, explorador/a!",
+                welcomeP: "Aprende y diviértete descubriendo cómo cambia nuestra luna.",
+                nameLabel: "Escribe tu nombre:",
+                btnStart: "Comenzar la Aventura",
+                exploreDesc: "Pulsa sobre cada fase para escuchar su explicación y ver cómo es.",
+                audioBtnTxt: "Escuchar",
+                phase1Title: "Luna Nueva",
+                phase1Sub: "No la vemos desde la Tierra.",
+                phase2Title: "Cuarto Creciente",
+                phase2Sub: "Forma una letra D en el cielo.",
+                phase3Title: "Luna Llena",
+                phase3Sub: "Brilla redonda y gigante.",
+                phase4Title: "Cuarto Menguante",
+                phase4Sub: "Va disminuyendo poco a poco.",
+                c1Title: "🎯 Reto 1: ¿Cuál es la primera fase del ciclo lunar?",
+                c1Instruction: "Selecciona la respuesta correcta:",
+                c2Title: "⭐ Reto 2: Verdadero o Falso",
+                trueTxt: "Verdadero",
+                falseTxt: "Falso",
+                c3Title: "✍️ Reto 3: Mi fase favorita",
+                c3Q: "Escribe en tu pauta de doble línea cuál es tu fase lunar preferida:",
+                sumTitle: "¡Misión Lunar Completada!",
+                sumSubtitle: "Has demostrado ser un experto astrónomo del CEIP Penyagolosa.",
+                badgeTxt: "🏅 Medalla de Oro Espacial conseguida",
+                restartTxt: "Volver a jugar",
+                back: "⬅️ Atrás",
+                next: "Siguiente Reto ➡️"
+            }
+        };
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'val' ? 'cas' : 'val';
+            const t = translations[currentLang];
+            
+            document.getElementById('main-title').innerText = t.mainTitle;
+            document.getElementById('main-subtitle').innerText = t.mainSubtitle;
+            document.getElementById('lang-label').innerText = t.langLabel;
+            document.getElementById('welcome-h2').innerText = t.welcomeH2;
+            document.getElementById('welcome-p').innerText = t.welcomeP;
+            document.getElementById('name-label').innerText = t.nameLabel;
+            document.getElementById('btn-start').innerText = t.btnStart;
+            document.getElementById('explore-desc').innerText = t.exploreDesc;
+            document.getElementById('audio-btn-txt').innerText = t.audioBtnTxt;
+            document.getElementById('phase-1-title').innerText = t.phase1Title;
+            document.getElementById('phase-1-sub').innerText = t.phase1Sub;
+            document.getElementById('phase-2-title').innerText = t.phase2Title;
+            document.getElementById('phase-2-sub').innerText = t.phase2Sub;
+            document.getElementById('phase-3-title').innerText = t.phase3Title;
+            document.getElementById('phase-3-sub').innerText = t.phase3Sub;
+            document.getElementById('phase-4-title').innerText = t.phase4Title;
+            document.getElementById('phase-4-sub').innerText = t.phase4Sub;
+            document.getElementById('c1-title').innerText = t.c1Title;
+            document.getElementById('c1-instruction').innerText = t.c1Instruction;
+            document.getElementById('c2-title').innerText = t.c2Title;
+            document.getElementById('true-txt').innerText = t.trueTxt;
+            document.getElementById('false-txt').innerText = t.falseTxt;
+            document.getElementById('c3-title').innerText = t.c3Title;
+            document.getElementById('c3-q').innerText = t.c3Q;
+            document.getElementById('sum-title').innerText = t.sumTitle;
+            document.getElementById('sum-subtitle').innerText = t.sumSubtitle;
+            document.getElementById('badge-txt').innerText = t.badgeTxt;
+            document.getElementById('restart-txt').innerText = t.restartTxt;
+        }
+
+        function goToScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('screen-' + screenId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        function startApp() {
+            const name = document.getElementById('student-name').value.trim();
+            if(!name) {
+                alert(currentLang === 'val' ? "Per favor, escriu el teu nom!" : "¡Por favor, escribe tu nombre!");
+                return;
+            }
+            document.getElementById('congrats-name').innerText = `✨ ${name} ✨`;
+            goToScreen('explore');
+        }
+
+        function selectPhase(phase) {
+            const texts = {
+                val: {
+                    nova: "La Lluna nova es quan la Lluna està entre el Sol i la Terra i no podem veure-la il·luminada.",
+                    creixent: "El Quart Creixent té forma de lletra D i veiem la meitat dreta il·luminada.",
+                    plena: "La Lluna Plena es veu completa, redona i molt brillant perquè el Sol l'il·luminada de ple.",
+                    minvant: "El Quart Minvant va reduint la seua llum poc a poc abans de començar de nou."
+                },
+                cas: {
+                    nova: "La Luna nueva es cuando la Luna está entre el Sol y la Tierra y no podemos verla iluminada.",
+                    creixent: "El Cuarto Creciente tiene forma de letra D y vemos la mitad derecha iluminada.",
+                    plena: "La Luna Llena se ve completa, redonda y muy brillante porque el Sol la ilumina por completo.",
+                    minvant: "El Cuarto Menguante va reduciendo su luz poco a poco antes de empezar de nuevo."
+                }
+            };
+            currentExploreText = texts[currentLang][phase];
+            speakText(currentExploreText);
+        }
+
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = currentLang === 'val' ? 'ca-ES' : 'es-ES';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function checkAnswer(button, isCorrect, challengeNum) {
+            const feedbackEl = document.getElementById('feedback-' + challengeNum);
+            
+            // Desactivar botones del grupo
+            const parent = button.parentElement;
+            parent.querySelectorAll('.option-btn').forEach(btn => {
+                btn.style.pointerEvents = 'none';
+            });
+
+            if(isCorrect) {
+                button.classList.add('correct');
+                feedbackEl.style.color = 'var(--success)';
+                feedbackEl.innerText = currentLang === 'val' ? "🎉 Molt bé! Resposta correcta! ⭐" : "🎉 ¡Muy bien! ¡Respuesta correcta! ⭐";
+                speakText(feedbackEl.innerText);
+            } else {
+                button.classList.add('incorrect');
+                feedbackEl.style.color = '#e63946';
+                feedbackEl.innerText = currentLang === 'val' ? "💡 Quasi! Torna a provar-ho o passa al següent." : "💡 ¡Casi! Vuelve a probarlo o pasa al siguiente.";
+                speakText(feedbackEl.innerText);
+            }
+        }
+
+        function toggleTeacherPanel() {
+            const panel = document.getElementById('teacher-panel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+    </script>
+</body>
+</html>
